@@ -10,7 +10,7 @@ from datetime import datetime
 
 # App Insights
 # TODO: Import required libraries for App Insights
-from opencensus.ext.azure.log_exporter import AzureLogHandler
+from opencensus.ext.azure.log_exporter import AzureLogHandler, AzureEventHandler
 from opencensus.ext.azure import metrics_exporter
 from opencensus.stats import aggregation as aggregation_module
 from opencensus.stats import measure as measure_module
@@ -29,9 +29,8 @@ connString = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823;IngestionE
 # Logging
 # logger = # TODO: Setup logger
 logger = logging.getLogger(__name__)
-logger.addHandler(AzureLogHandler(
-connection_string = instrumentKey)
-)
+logger.addHandler(AzureEventHandler(connection_string = instrumentKey))
+logger.setLevel(logging.INFO)
 
 # Metrics
 # exporter = # TODO: Setup exporter
@@ -42,8 +41,7 @@ exporter = metrics_exporter.new_metrics_exporter(
 # Tracing
 # tracer = # TODO: Setup tracer
 tracer = Tracer(
-    exporter=AzureExporter(
-        connection_string=instrumentKey),
+    exporter=AzureExporter(connection_string=instrumentKey),
     sampler=ProbabilitySampler(1.0),
 )
 
@@ -112,12 +110,12 @@ def index():
             vote1 = r.get(button1).decode('utf-8')
             properties = {'custom_dimensions': {'Cats Vote': vote1}}
             # TODO: use logger object to log cat vote
-            logger.info(properties)
+            logger.info('catVote', extra=properties)
 
             vote2 = r.get(button2).decode('utf-8')
             properties = {'custom_dimensions': {'Dogs Vote': vote2}}
             # TODO: use logger object to log dog vote
-            logger.info(properties)
+            logger.info('dogVote', extra=properties)
 
             return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
 
