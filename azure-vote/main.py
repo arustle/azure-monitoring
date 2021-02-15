@@ -6,7 +6,6 @@ import socket
 import sys
 import logging
 from datetime import datetime
-from App     import Azu
 
 
 # App Insights
