@@ -41,7 +41,7 @@ exporter = metrics_exporter.new_metrics_exporter(
   connection_string='InstrumentationKey={guid}')
 
 # Tracing
-tracer = # TODO: Setup tracer
+# tracer = # TODO: Setup tracer
 tracer = Tracer(
     exporter=AzureExporter(
         connection_string='InstrumentationKey={guid}'),
