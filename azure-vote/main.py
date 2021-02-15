@@ -22,7 +22,7 @@ from opencensus.trace.samplers import ProbabilitySampler
 from opencensus.trace.tracer import Tracer
 from opencensus.ext.flask.flask_middleware import FlaskMiddleware
 
-guid = 'cb2ed94e-ad9f-47a1-a188-02b08f6b1823'
+instrumentKey = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823'
 connString = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823;IngestionEndpoint=https://westus2-1.in.applicationinsights.azure.com/'
 
 
@@ -30,23 +30,20 @@ connString = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823;IngestionE
 # logger = # TODO: Setup logger
 logger = logging.getLogger(__name__)
 logger.addHandler(AzureLogHandler(
-# connection_string = 'InstrumentationKey={guid}')
-connection_string = connString)
+connection_string = instrumentKey)
 )
 
 # Metrics
 # exporter = # TODO: Setup exporter
 exporter = metrics_exporter.new_metrics_exporter(
   enable_standard_metrics=True,
-  connection_string = connString)
-#   connection_string='InstrumentationKey={guid}')
+  connection_string = instrumentKey)
 
 # Tracing
 # tracer = # TODO: Setup tracer
 tracer = Tracer(
     exporter=AzureExporter(
-        # connection_string = connString),
-        connection_string='InstrumentationKey={guid}'),
+        connection_string=instrumentKey),
     sampler=ProbabilitySampler(1.0),
 )
 
@@ -56,8 +53,7 @@ app = Flask(__name__)
 # middleware = # TODO: Setup flask middleware
 middleware = FlaskMiddleware(
     app,
-    # exporter=AzureExporter(connection_string="InstrumentationKey={guid}"),
-    exporter=AzureExporter(connection_string=connString),
+    exporter=AzureExporter(connection_string=instrumentKey),
     sampler=ProbabilitySampler(rate=1.0),
 )
 
