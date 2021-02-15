@@ -22,7 +22,7 @@ from opencensus.trace.samplers import ProbabilitySampler
 from opencensus.trace.tracer import Tracer
 from opencensus.ext.flask.flask_middleware import FlaskMiddleware
 
-# guid = 'cb2ed94e-ad9f-47a1-a188-02b08f6b1823'
+guid = 'cb2ed94e-ad9f-47a1-a188-02b08f6b1823'
 connString = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823;IngestionEndpoint=https://westus2-1.in.applicationinsights.azure.com/'
 
 
@@ -45,8 +45,8 @@ exporter = metrics_exporter.new_metrics_exporter(
 # tracer = # TODO: Setup tracer
 tracer = Tracer(
     exporter=AzureExporter(
-        connection_string = connString),
-        # connection_string='InstrumentationKey={guid}'),
+        # connection_string = connString),
+        connection_string='InstrumentationKey={guid}'),
     sampler=ProbabilitySampler(1.0),
 )
 
