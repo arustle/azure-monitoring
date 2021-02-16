@@ -21,29 +21,31 @@ from opencensus.ext.azure.trace_exporter import AzureExporter
 from opencensus.trace.samplers import ProbabilitySampler
 from opencensus.trace.tracer import Tracer
 from opencensus.ext.flask.flask_middleware import FlaskMiddleware
+from applicationinsights import TelemetryClient
 
-instrumentKeyDD = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823'
-instrumentKey = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823;IngestionEndpoint=https://westus2-1.in.applicationinsights.azure.com/'
+instrumentKey = 'cb2ed94e-ad9f-47a1-a188-02b08f6b1823'
+connString = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823;IngestionEndpoint=https://westus2-1.in.applicationinsights.azure.com/'
 
 
 # Logging
 # logger = # TODO: Setup logger
 logger = logging.getLogger(__name__)
-logger.addHandler(AzureEventHandler(connection_string = instrumentKey))
+logger.addHandler(AzureEventHandler(connection_string = connString))
 logger.setLevel(logging.INFO)
 
 # Metrics
 # exporter = # TODO: Setup exporter
 exporter = metrics_exporter.new_metrics_exporter(
   enable_standard_metrics=True,
-  connection_string = instrumentKey)
+  connection_string = connString)
 
 # Tracing
 # tracer = # TODO: Setup tracer
 tracer = Tracer(
-    exporter=AzureExporter(connection_string=instrumentKey),
+    exporter=AzureExporter(connection_string=connString),
     sampler=ProbabilitySampler(1.0),
 )
+telemetryClient = TelemetryClient(instrumentKey)
 
 app = Flask(__name__)
 
@@ -51,7 +53,7 @@ app = Flask(__name__)
 # middleware = # TODO: Setup flask middleware
 middleware = FlaskMiddleware(
     app,
-    exporter=AzureExporter(connection_string=instrumentKey),
+    exporter=AzureExporter(connection_string=connString),
     sampler=ProbabilitySampler(rate=1.0),
 )
 
@@ -92,11 +94,16 @@ def index():
         # Get current values
         vote1 = r.get(button1).decode('utf-8')
         # TODO: use tracer object to trace cat vote
-        tracer.span("Cat Vote")
-        logger.info('CatVoteXX')
+        tracer.span("Cat Vote A")
+        logger.info('Cat Vote B')        
+        telemetryClient.track_event("Cat Vote C")
+        telemetryClient.flush()
         vote2 = r.get(button2).decode('utf-8')
         # TODO: use tracer object to trace dog vote
-        tracer.span("Dog Vote")
+        tracer.span("Dog Vote A")
+        logger.info('Dog Vote B')        
+        telemetryClient.track_event("Dog Vote C")
+        telemetryClient.flush()
 
         # Return index with values
         return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
