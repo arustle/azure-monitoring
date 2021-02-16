@@ -7,10 +7,8 @@ import sys
 import logging
 from datetime import datetime
 
-
 # App Insights
-# TODO: Import required libraries for App Insights
-from opencensus.ext.azure.log_exporter import AzureLogHandler, AzureEventHandler
+from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opencensus.ext.azure import metrics_exporter
 from opencensus.stats import aggregation as aggregation_module
 from opencensus.stats import measure as measure_module
@@ -23,38 +21,32 @@ from opencensus.trace.tracer import Tracer
 from opencensus.ext.flask.flask_middleware import FlaskMiddleware
 from applicationinsights import TelemetryClient
 
-instrumentKey = 'cb2ed94e-ad9f-47a1-a188-02b08f6b1823'
-connStringAAA = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823;IngestionEndpoint=https://westus2-1.in.applicationinsights.azure.com/'
-connString = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823'
-
-
 # Logging
-# logger = # TODO: Setup logger
 logger = logging.getLogger(__name__)
-logger.addHandler(AzureLogHandler(connection_string = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823'))
+logger.addHandler(AzureLogHandler(
+    connection_string='InstrumentationKey=f4988448-63ed-4960-9c4e-b754b82bb1cf')
+)
 logger.setLevel(logging.INFO)
 
 # Metrics
-# exporter = # TODO: Setup exporter
 exporter = metrics_exporter.new_metrics_exporter(
   enable_standard_metrics=True,
-  connection_string = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823')
+  connection_string='InstrumentationKey=f4988448-63ed-4960-9c4e-b754b82bb1cf')
 
 # Tracing
-# tracer = # TODO: Setup tracer
 tracer = Tracer(
-    exporter=AzureExporter(connection_string='InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823'),
+    exporter=AzureExporter(
+        connection_string='InstrumentationKey=f4988448-63ed-4960-9c4e-b754b82bb1cf'),
     sampler=ProbabilitySampler(1.0),
 )
-telemetryClient = TelemetryClient(instrumentKey)
+tc = TelemetryClient('f4988448-63ed-4960-9c4e-b754b82bb1cf')
 
 app = Flask(__name__)
 
 # Requests
-# middleware = # TODO: Setup flask middleware
 middleware = FlaskMiddleware(
     app,
-    exporter=AzureExporter(connection_string='InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823'),
+    exporter=AzureExporter(connection_string="InstrumentationKey=f4988448-63ed-4960-9c4e-b754b82bb1cf"),
     sampler=ProbabilitySampler(rate=1.0),
 )
 
@@ -91,20 +83,15 @@ if not r.get(button2): r.set(button2,0)
 def index():
 
     if request.method == 'GET':
-
         # Get current values
         vote1 = r.get(button1).decode('utf-8')
-        # TODO: use tracer object to trace cat vote
-        tracer.span("Cat Vote A")
-        logger.info('Cat Vote B')        
-        telemetryClient.track_event("Cat Vote C")
-        telemetryClient.flush()
+        tracer.span("Cats")
+        tc.track_event("Cats")
+        tc.flush()
         vote2 = r.get(button2).decode('utf-8')
-        # TODO: use tracer object to trace dog vote
-        tracer.span("Dog Vote A")
-        logger.info('Dog Vote B')        
-        telemetryClient.track_event("Dog Vote C")
-        telemetryClient.flush()
+        tracer.span("Dogs")
+        tc.track_event("Dogs")
+        tc.flush()
 
         # Return index with values
         return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
@@ -118,13 +105,11 @@ def index():
             r.set(button2,0)
             vote1 = r.get(button1).decode('utf-8')
             properties = {'custom_dimensions': {'Cats Vote': vote1}}
-            # TODO: use logger object to log cat vote
-            logger.warning('catVote', extra=properties)
+            logger.warning("Cat", extra=properties)
 
             vote2 = r.get(button2).decode('utf-8')
             properties = {'custom_dimensions': {'Dogs Vote': vote2}}
-            # TODO: use logger object to log dog vote
-            logger.warning('dogVote', extra=properties)
+            logger.warning("Dog", extra=properties)
 
             return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
 
