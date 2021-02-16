@@ -31,19 +31,19 @@ connString = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823'
 # Logging
 # logger = # TODO: Setup logger
 logger = logging.getLogger(__name__)
-logger.addHandler(AzureLogHandler(connection_string = connString))
+logger.addHandler(AzureLogHandler(connection_string = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823'))
 logger.setLevel(logging.INFO)
 
 # Metrics
 # exporter = # TODO: Setup exporter
 exporter = metrics_exporter.new_metrics_exporter(
   enable_standard_metrics=True,
-  connection_string = connString)
+  connection_string = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823')
 
 # Tracing
 # tracer = # TODO: Setup tracer
 tracer = Tracer(
-    exporter=AzureExporter(connection_string=connString),
+    exporter=AzureExporter(connection_string='InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823'),
     sampler=ProbabilitySampler(1.0),
 )
 telemetryClient = TelemetryClient(instrumentKey)
@@ -54,7 +54,7 @@ app = Flask(__name__)
 # middleware = # TODO: Setup flask middleware
 middleware = FlaskMiddleware(
     app,
-    exporter=AzureExporter(connection_string=connString),
+    exporter=AzureExporter(connection_string='InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823'),
     sampler=ProbabilitySampler(rate=1.0),
 )
 
