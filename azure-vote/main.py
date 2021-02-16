@@ -31,7 +31,7 @@ connString = 'InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823'
 # Logging
 # logger = # TODO: Setup logger
 logger = logging.getLogger(__name__)
-logger.addHandler(AzureEventHandler(connection_string = connString))
+logger.addHandler(AzureLogHandler(connection_string = connString))
 logger.setLevel(logging.INFO)
 
 # Metrics
@@ -119,12 +119,12 @@ def index():
             vote1 = r.get(button1).decode('utf-8')
             properties = {'custom_dimensions': {'Cats Vote': vote1}}
             # TODO: use logger object to log cat vote
-            logger.info('catVote', extra=properties)
+            logger.warning('catVote', extra=properties)
 
             vote2 = r.get(button2).decode('utf-8')
             properties = {'custom_dimensions': {'Dogs Vote': vote2}}
             # TODO: use logger object to log dog vote
-            logger.info('dogVote', extra=properties)
+            logger.warning('dogVote', extra=properties)
 
             return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
 
@@ -143,6 +143,6 @@ def index():
 
 if __name__ == "__main__":
     # comment line below when deploying to VMSS
-    app.run() # local
+    # app.run() # local
     # uncomment the line below before deployment to VMSS
-    # app.run(host='0.0.0.0', threaded=True, debug=True) # remote
+    app.run(host='0.0.0.0', threaded=True, debug=True) # remote
