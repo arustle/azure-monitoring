@@ -72,6 +72,9 @@ A bash script has been provided to automate the creation of the VMSS. You should
 
 The script will take a few minutes to create and configure all resources. Once the script is complete, you can go to Azure portal and look for the **acdnd-c4-project** resource group. Inside is the VMSS resource. You'll use the public IP address and port 50000 to connect to the VM. It's port 50000 because the inbound NAT rule of the load balancer defaults to port 50000.
 
+Use this confirm ports and IP addresses:
+`az vmss list-instance-connection-info --resource-group acdnd-c4-project --name udacity-vmss`
+
 The following command will connect you to your VM. **Note**: Replace `[public-ip]` with the public-ip address of your VMSS.
 
 `ssh -p 50000 udacityadmin@[public-ip]`
@@ -108,6 +111,12 @@ We'll use Azure Pipelines to deploy our application to an Azure VM Scale Set. Fo
 1. For the VM Scale Set, create an autoscaling rule based on metrics.
 2. Trigger the conditions for the rule, causing an autoscaling event.
 3. When complete, enable manual scale.
+
+kubectl run -i --tty load-generator --image=busybox /bin/sh
+# comment above will create the container and log you in to the container
+# then run the command below
+while true; do wget -q -O- http://cluster-ip-here; done
+
 
 ### Runbook
 
