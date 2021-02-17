@@ -23,29 +23,29 @@ from opencensus.trace.tracer import Tracer
 from opencensus.ext.flask.flask_middleware import FlaskMiddleware
 from applicationinsights import TelemetryClient
 
-instrumentKey = "cb2ed94e-ad9f-47a1-a188-02b08f6b1823"
-connString = "InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823"
+instrumentKey = "cad275ad-21e8-41ee-b71f-c9fec96293ed"
+connString = "InstrumentationKey=cad275ad-21e8-41ee-b71f-c9fec96293ed"
 
 
 # Logging
 # logger = # TODO: Setup logger
 logger = logging.getLogger(__name__)
-logger.addHandler(AzureLogHandler(connection_string = "InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823"))
+logger.addHandler(AzureLogHandler(connection_string = connString))
 logger.setLevel(logging.INFO)
 
 # Metrics
 # exporter = # TODO: Setup exporter
 exporter = metrics_exporter.new_metrics_exporter(
   enable_standard_metrics=True,
-  connection_string = "InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823")
+  connection_string = connString)
 
 # Tracing
 # tracer = # TODO: Setup tracer
 tracer = Tracer(
-    exporter=AzureExporter(connection_string="InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823"),
+    exporter=AzureExporter(connection_string=connString),
     sampler=ProbabilitySampler(1.0),
 )
-telemetryClient = TelemetryClient("cb2ed94e-ad9f-47a1-a188-02b08f6b1823")
+telemetryClient = TelemetryClient(instrumentKey)
 
 app = Flask(__name__)
 
@@ -53,7 +53,7 @@ app = Flask(__name__)
 # middleware = # TODO: Setup flask middleware
 middleware = FlaskMiddleware(
     app,
-    exporter=AzureExporter(connection_string="InstrumentationKey=cb2ed94e-ad9f-47a1-a188-02b08f6b1823"),
+    exporter=AzureExporter(connection_string=connString),
     sampler=ProbabilitySampler(rate=1.0),
 )
 
